@@ -1,0 +1,35 @@
+name: inboxer2
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: '>=3.4.3 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  path_provider: ^2.1.1
+  permission_handler: ^11.0.1
+  receive_sharing_intent:
+    version: ^1.4.5
+    git: https://github.com/Thogsit/receive_sharing_intent
+  path: 
+  file_picker: ^8.0.5
+  shared_preferences: ^2.2.3
+  get_it: ^7.7.0
+  watch_it: ^1.4.2
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_launcher_icons: ^0.13.1
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+
+flutter_launcher_icons:
+  android: true
+  image_path : "assets/icon/icons8-trash-24.png"
