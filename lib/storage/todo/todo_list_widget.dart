@@ -1,11 +1,40 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import 'package:inboxer2/storage/config/config.dart';
 import 'package:inboxer2/storage/todo/todo.dart';
+import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:watch_it/watch_it.dart';
 
-class TodoListWidget extends StatelessWidget with WatchItMixin {
-  TodoListWidget({super.key});
+class TodoListWidget extends WatchingStatefulWidget {
+  const TodoListWidget({super.key});
+
+  @override
+  State<TodoListWidget> createState() => _TodoListWidgetState();
+}
+
+class _TodoListWidgetState extends State<TodoListWidget> {
+  late StreamSubscription _intentDataStreamSubscription;
+  @override
+  void initState() {
+    super.initState();
+
+    if (Platform.isAndroid) {
+      _intentDataStreamSubscription =
+          ReceiveSharingIntent.getTextStream().listen((String value) async {
+        await GetIt.I<TodoStorage>().add(Todo.now(value));
+      }, onError: (err) {});
+    }
+  }
+
+  @override
+  void dispose() async {
+    super.dispose();
+    await _intentDataStreamSubscription.cancel();
+  }
+
   @override
   Widget build(BuildContext context) {
     final todos = watchIt<TodoStorage>();

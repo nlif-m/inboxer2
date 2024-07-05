@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:inboxer2/storage/config/config.dart';
 import 'package:inboxer2/storage/todo/todo_model.dart';
-import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
 export 'package:inboxer2/storage/todo/todo_model.dart';
 export 'package:inboxer2/storage/todo/todo_add_dialog.dart';
@@ -24,19 +23,11 @@ abstract class TodoStorage extends ChangeNotifier {
 class TodoStorageInboxFile extends TodoStorage {
   static const inboxHeader = "#+filetags: inbox\n";
   late ValueNotifier<List<Todo>> _todos;
-  late StreamSubscription _intentDataStreamSubscription;
   StreamSubscription<FileSystemEvent>? _inboxEventStream;
 
   @override
   Future<void> init() async {
     _todos = ValueNotifier<List<Todo>>(await _readTodos());
-    if (Platform.isAndroid) {
-      _intentDataStreamSubscription =
-          ReceiveSharingIntent.getTextStream().listen((String value) async {
-        await GetIt.I<TodoStorage>().add(Todo.now(value));
-        notifyListeners();
-      }, onError: (err) {});
-    }
     notifyListeners();
 
     innerFunc(event) async {

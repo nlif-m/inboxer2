@@ -35,7 +35,6 @@ void main() async {
     ReceiveSharingIntent.getInitialText().then((value) async {
       if (value != null && value.isNotEmpty) {
         await todoStorage.add(Todo.now(value));
-        exit(0);
       }
     });
   }
@@ -48,7 +47,7 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       home: TodoListWidget(),
     );
   }
