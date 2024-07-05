@@ -6,10 +6,10 @@ class TodoDeleteDialog extends StatefulWidget {
   const TodoDeleteDialog({super.key, required this.todo});
 
   @override
-  _TodoDeleteDialogState createState() => _TodoDeleteDialogState();
+  TodoDeleteDialogState createState() => TodoDeleteDialogState();
 }
 
-class _TodoDeleteDialogState extends State<TodoDeleteDialog> {
+class TodoDeleteDialogState extends State<TodoDeleteDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(

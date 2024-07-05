@@ -6,7 +6,6 @@ import 'package:inboxer2/storage/storage.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:path_provider/path_provider.dart';
 
 final getIt = GetIt.instance;
 

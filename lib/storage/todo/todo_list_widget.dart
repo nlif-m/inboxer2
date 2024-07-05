@@ -14,7 +14,6 @@ class TodoListWidget extends StatelessWidget with WatchItMixin {
 
     final config = getIt<ConfigStorage>();
     final todoStorage = getIt<TodoStorage>();
-    print(todos.todos().value);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
@@ -23,7 +22,7 @@ class TodoListWidget extends StatelessWidget with WatchItMixin {
               onPressed: () async {
                 await config.askInbox();
               },
-              icon: Icon(Icons.settings)),
+              icon: const Icon(Icons.settings)),
           IconButton(
               onPressed: () async {
                 await todoStorage.update();

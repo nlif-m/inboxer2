@@ -4,10 +4,10 @@ class TodoAddDialog extends StatefulWidget {
   const TodoAddDialog({super.key});
 
   @override
-  _TodoAddDialogState createState() => _TodoAddDialogState();
+  TodoAddDialogState createState() => TodoAddDialogState();
 }
 
-class _TodoAddDialogState extends State<TodoAddDialog> {
+class TodoAddDialogState extends State<TodoAddDialog> {
   String _userTodo = "";
   @override
   Widget build(BuildContext context) {

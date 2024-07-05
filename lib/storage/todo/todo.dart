@@ -17,6 +17,7 @@ abstract class TodoStorage extends ChangeNotifier {
   Future<bool> delete(Todo todo);
   Future<void> init();
   Future<void> update();
+  // ignore: non_constant_identifier_names
   Future<bool> updateTodo(Todo old, Todo New);
 }
 
@@ -24,15 +25,41 @@ class TodoStorageInboxFile extends TodoStorage {
   static const inboxHeader = "#+filetags: inbox\n";
   late ValueNotifier<List<Todo>> _todos;
   late StreamSubscription _intentDataStreamSubscription;
+  StreamSubscription<FileSystemEvent>? _inboxEventStream;
 
   @override
   Future<void> init() async {
     _todos = ValueNotifier<List<Todo>>(await _readTodos());
-    _intentDataStreamSubscription =
-        ReceiveSharingIntent.getTextStream().listen((String value) async {
-      await add(Todo.now(value));
-    }, onError: (err) {});
+    if (Platform.isAndroid) {
+      _intentDataStreamSubscription =
+          ReceiveSharingIntent.getTextStream().listen((String value) async {
+        await getIt<TodoStorage>().add(Todo.now(value));
+        notifyListeners();
+      }, onError: (err) {});
+    }
     notifyListeners();
+
+    innerFunc(event) async {
+      var todos = await _readTodos();
+      _todos.value = todos;
+      notifyListeners();
+    }
+
+    _inboxEventStream = getIt<ConfigStorage>()
+        .inboxFile
+        .value!
+        .watch(events: FileSystemEvent.modify)
+        .listen(innerFunc);
+    (getIt<ConfigStorage>().inboxFile).addListener(() async {
+      if (_inboxEventStream != null) {
+        await _inboxEventStream!.cancel();
+      }
+      _inboxEventStream = getIt<ConfigStorage>()
+          .inboxFile
+          .value!
+          .watch(events: FileSystemEvent.modify)
+          .listen(innerFunc);
+    });
   }
 
   @override
@@ -66,6 +93,7 @@ class TodoStorageInboxFile extends TodoStorage {
   }
 
   @override
+  // ignore: non_constant_identifier_names
   Future<bool> updateTodo(Todo old, Todo New) async {
     var index = _todos.value.indexOf(old);
     if (index == -1) return false;
@@ -77,6 +105,9 @@ class TodoStorageInboxFile extends TodoStorage {
 
   Future<List<Todo>> _readTodos() async {
     File inboxFile = await _inbox();
+    if (!await inboxFile.exists()) {
+      await inboxFile.create();
+    }
 
     String content = await inboxFile.readAsString();
     return Todo.fromString(content);
