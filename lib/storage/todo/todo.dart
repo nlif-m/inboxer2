@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:inboxer2/main.dart';
+import 'package:get_it/get_it.dart';
 import 'package:inboxer2/storage/config/config.dart';
 import 'package:inboxer2/storage/todo/todo_model.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
@@ -33,7 +33,7 @@ class TodoStorageInboxFile extends TodoStorage {
     if (Platform.isAndroid) {
       _intentDataStreamSubscription =
           ReceiveSharingIntent.getTextStream().listen((String value) async {
-        await getIt<TodoStorage>().add(Todo.now(value));
+        await GetIt.I<TodoStorage>().add(Todo.now(value));
         notifyListeners();
       }, onError: (err) {});
     }
@@ -45,16 +45,16 @@ class TodoStorageInboxFile extends TodoStorage {
       notifyListeners();
     }
 
-    _inboxEventStream = getIt<ConfigStorage>()
+    _inboxEventStream = GetIt.I<ConfigStorage>()
         .inboxFile
         .value!
         .watch(events: FileSystemEvent.modify)
         .listen(innerFunc);
-    (getIt<ConfigStorage>().inboxFile).addListener(() async {
+    (GetIt.I<ConfigStorage>().inboxFile).addListener(() async {
       if (_inboxEventStream != null) {
         await _inboxEventStream!.cancel();
       }
-      _inboxEventStream = getIt<ConfigStorage>()
+      _inboxEventStream = GetIt.I<ConfigStorage>()
           .inboxFile
           .value!
           .watch(events: FileSystemEvent.modify)
@@ -128,6 +128,6 @@ class TodoStorageInboxFile extends TodoStorage {
   }
 
   Future<File> _inbox() async {
-    return await getIt<ConfigStorage>().inbox;
+    return await GetIt.I<ConfigStorage>().inbox;
   }
 }

@@ -7,8 +7,6 @@ import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-final getIt = GetIt.instance;
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (Platform.isAndroid) {
@@ -19,19 +17,19 @@ void main() async {
   }
 
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  getIt.registerSingleton<SharedPreferences>(prefs);
+  GetIt.I.registerSingleton<SharedPreferences>(prefs);
 
   ConfigStorage configStorage =
       await ConfigStoragePrefs.withAsk(prefs: prefs, force: false);
-  getIt.registerSingleton<ConfigStorage>(configStorage);
+  GetIt.I.registerSingleton<ConfigStorage>(configStorage);
 
   TodoStorage todoStorage = TodoStorageInboxFile();
   await todoStorage.init();
-  getIt.registerSingleton<TodoStorage>(todoStorage);
+  GetIt.I.registerSingleton<TodoStorage>(todoStorage);
 
   Storage storage =
       Storage(configStorage: configStorage, todoStorage: todoStorage);
-  getIt.registerSingleton<Storage>(storage);
+  GetIt.I.registerSingleton<Storage>(storage);
 
   if (Platform.isAndroid) {
     ReceiveSharingIntent.getInitialText().then((value) async {

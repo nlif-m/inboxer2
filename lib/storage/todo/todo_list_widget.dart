@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:inboxer2/main.dart';
 import 'package:inboxer2/storage/config/config.dart';
 import 'package:inboxer2/storage/todo/todo.dart';
 import 'package:watch_it/watch_it.dart';
@@ -12,8 +11,8 @@ class TodoListWidget extends StatelessWidget with WatchItMixin {
     final todos = watchIt<TodoStorage>();
     final isHidden = watchValue((ConfigStorage c) => c.isHidden());
 
-    final config = getIt<ConfigStorage>();
-    final todoStorage = getIt<TodoStorage>();
+    final config = GetIt.I<ConfigStorage>();
+    final todoStorage = GetIt.I<TodoStorage>();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,

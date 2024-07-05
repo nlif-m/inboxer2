@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:inboxer2/main.dart';
+import 'package:get_it/get_it.dart';
 import 'package:inboxer2/storage/config/config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path/path.dart' as path;
@@ -65,7 +65,7 @@ class ConfigStoragePrefs extends ConfigStorage {
     do {
       dir = await FilePicker.platform.getDirectoryPath();
     } while (dir == null);
-    dir = path.join(dir, getIt<ConfigStorage>().inboxFileName);
+    dir = path.join(dir, GetIt.I<ConfigStorage>().inboxFileName);
     return File(dir);
   }
 }
