@@ -1,0 +1,49 @@
+name: "inboxer2"
+arch: "amd64"
+platform: "linux"
+version: "1.0.0"
+section: "default"
+priority: "extra"
+provides:
+- inboxer2
+maintainer: "nlif-m"
+description: |
+  Cross platform todo app
+  in org mode syntax
+vendor: "FooBarCorp"
+homepage: "https://github.com/nlif-m/inboxer2"
+license: "MIT"
+overrides:
+  archlinux:
+    depends:
+      - brotli
+      - bzip2
+      - dbus
+      - expat
+      - fontconfig
+      - freetype2
+      - graphite
+      - gtk3
+      - libcap
+      - libcloudproviders
+      - libdatrie
+      - libffi
+      - libjpeg-turbo
+      - libpng
+      - libx11
+      - pango
+      - util-linux-libs
+      - wayland
+      - xz
+      - zlib
+      - zstd
+contents:
+- src: ./build/linux/x64/release/bundle/lib
+  dst: /usr/lib/inboxer2/lib
+- src: ./build/linux/x64/release/bundle/data
+  dst: /usr/lib/inboxer2/data
+- src: ./build/linux/x64/release/bundle/inboxer2
+  dst: /usr/lib/inboxer2/inboxer2
+- src: /usr/lib/inboxer2/inboxer2
+  dst: /usr/bin/inboxer2
+  type: symlink
