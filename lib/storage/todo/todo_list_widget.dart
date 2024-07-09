@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:inboxer2/storage/config/config.dart';
 import 'package:inboxer2/storage/todo/todo.dart';
@@ -46,6 +47,12 @@ class _TodoListWidgetState extends State<TodoListWidget> {
       appBar: AppBar(
         backgroundColor: Colors.black,
         actions: [
+          IconButton(
+            icon: Icon(Icons.exit_to_app),
+            onPressed: () {
+              SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+            },
+          ),
           IconButton(
               onPressed: () async {
                 await config.askInbox();
