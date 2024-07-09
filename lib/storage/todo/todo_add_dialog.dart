@@ -28,11 +28,6 @@ class TodoAddDialogState extends State<TodoAddDialog> {
               Navigator.of(context).pop(_userTodo);
             },
             child: const Text("save")),
-        ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pop(_userTodo);
-            },
-            child: const Text("cancel"))
       ],
     );
   }
