@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:inboxer2/storage/todo/todo.dart';
+import 'package:inboxer2/services/services.dart';
 
 class TodoCardWidget extends StatelessWidget {
   final bool hidden;

@@ -1,27 +1,14 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
-import 'package:inboxer2/storage/config/config.dart';
-import 'package:inboxer2/storage/todo/todo_model.dart';
 
-export 'package:inboxer2/storage/todo/todo_model.dart';
-export 'package:inboxer2/storage/todo/todo_add_dialog.dart';
-export 'package:inboxer2/storage/todo/todo_list_tile.dart';
-export 'package:inboxer2/storage/todo/todo_list_widget.dart';
+import 'package:inboxer2/services/services.dart';
 
-abstract class TodoStorage extends ChangeNotifier {
-  ValueNotifier<List<Todo>> todos();
-  Future<void> add(Todo todo);
-  Future<bool> delete(Todo todo);
-  Future<void> init();
-  Future<void> update();
-  // ignore: non_constant_identifier_names
-  Future<bool> updateTodo(Todo old, Todo New);
-}
+class TodoServiceInboxFile extends TodoService {
+  TodoServiceInboxFile({required ConfigService config}) : _config = config;
 
-class TodoStorageInboxFile extends TodoStorage {
-  static const inboxHeader = "#+filetags: inbox\n";
+  static const _inboxHeader = "#+filetags: inbox\n";
+  final ConfigService _config;
   late ValueNotifier<List<Todo>> _todos;
   StreamSubscription<FileSystemEvent>? _inboxEventStream;
 
@@ -36,18 +23,14 @@ class TodoStorageInboxFile extends TodoStorage {
       notifyListeners();
     }
 
-    _inboxEventStream = GetIt.I<ConfigStorage>()
-        .inboxFile
-        .value!
+    _inboxEventStream = _config.inboxFile.value!
         .watch(events: FileSystemEvent.modify)
         .listen(innerFunc);
-    (GetIt.I<ConfigStorage>().inboxFile).addListener(() async {
+    (_config.inboxFile).addListener(() async {
       if (_inboxEventStream != null) {
         await _inboxEventStream!.cancel();
       }
-      _inboxEventStream = GetIt.I<ConfigStorage>()
-          .inboxFile
-          .value!
+      _inboxEventStream = _config.inboxFile.value!
           .watch(events: FileSystemEvent.modify)
           .listen(innerFunc);
     });
@@ -85,10 +68,10 @@ class TodoStorageInboxFile extends TodoStorage {
 
   @override
   // ignore: non_constant_identifier_names
-  Future<bool> updateTodo(Todo old, Todo New) async {
+  Future<bool> updateTodo(Todo old, Todo new_) async {
     var index = _todos.value.indexOf(old);
     if (index == -1) return false;
-    _todos.value[index] = New;
+    _todos.value[index] = new_;
 
     notifyListeners();
     return true;
@@ -106,7 +89,7 @@ class TodoStorageInboxFile extends TodoStorage {
 
   String _asStringFile() {
     var todosText = _todos.value.map((e) => e.asOrgTodo());
-    return [inboxHeader, ...todosText].join();
+    return [_inboxHeader, ...todosText].join();
   }
 
   void _writeTodos(List<Todo> todos) async {
@@ -119,6 +102,6 @@ class TodoStorageInboxFile extends TodoStorage {
   }
 
   Future<File> _inbox() async {
-    return await GetIt.I<ConfigStorage>().inbox;
+    return await _config.inbox;
   }
 }

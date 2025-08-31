@@ -1,13 +1,13 @@
 import 'dart:io';
+import 'package:flutter/material.dart';
 
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
-import 'package:inboxer2/storage/config/config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path/path.dart' as path;
 
-class ConfigStoragePrefs extends ConfigStorage {
+import 'package:inboxer2/services/services.dart';
+
+class ConfigServicePrefs extends ConfigService {
   final SharedPreferences prefs;
   static const String _inboxFileKey = "config.inboxFile";
   final ValueNotifier<bool> _isHidden = ValueNotifier(true);
@@ -20,7 +20,7 @@ class ConfigStoragePrefs extends ConfigStorage {
     _isHidden.value = hidden;
   }
 
-  ConfigStoragePrefs._({required this.prefs, File? file}) {
+  ConfigServicePrefs._({required this.prefs, File? file}) {
     inboxFile = ValueNotifier(file);
   }
 
@@ -42,21 +42,21 @@ class ConfigStoragePrefs extends ConfigStorage {
 
   @override
   Future<File> askInbox() async {
-    inboxFile.value = await ConfigStoragePrefs._askForInboxFile(prefs: prefs);
+    inboxFile.value = await ConfigServicePrefs._askForInboxFile(prefs: prefs);
     await prefs.setString(_inboxFileKey, inboxFile.value!.path);
     return inboxFile.value!;
   }
 
-  static Future<ConfigStoragePrefs> withAsk(
+  static Future<ConfigServicePrefs> withAsk(
       {required SharedPreferences prefs, bool force = false}) async {
     String? fileString = prefs.getString(_inboxFileKey);
     File? f = fileString == null ? null : File(fileString);
     if (force || f == null) {
-      f = await ConfigStoragePrefs._askForInboxFile(prefs: prefs);
+      f = await ConfigServicePrefs._askForInboxFile(prefs: prefs);
       await prefs.setString(_inboxFileKey, f.path);
     }
 
-    return ConfigStoragePrefs._(prefs: prefs, file: f);
+    return ConfigServicePrefs._(prefs: prefs, file: f);
   }
 
   static Future<File> _askForInboxFile(
@@ -65,7 +65,7 @@ class ConfigStoragePrefs extends ConfigStorage {
     do {
       dir = await FilePicker.platform.getDirectoryPath();
     } while (dir == null);
-    dir = path.join(dir, GetIt.I<ConfigStorage>().inboxFileName);
+    dir = path.join(dir, ConfigService.inboxFileName);
     return File(dir);
   }
 }

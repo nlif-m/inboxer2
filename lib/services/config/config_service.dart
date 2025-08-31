@@ -1,15 +1,17 @@
 import 'dart:io';
 
+export 'config_service.dart';
+export 'config_service_prefs.dart';
+
 import 'package:flutter/material.dart';
 
-export 'package:inboxer2/storage/config/config_prefs.dart';
-
-abstract class ConfigStorage {
+abstract class ConfigService {
   late ValueNotifier<bool> _isHidden;
   ValueNotifier<bool> isHidden();
   late ValueNotifier<File?> inboxFile;
   void setHidden(bool hidden) => _isHidden.value = hidden;
-  String inboxFileName = "refile.org";
+  // TODO: Make it dynamic
+  static String inboxFileName = "refile.org";
   Future<File> get inbox async {
     throw UnimplementedError("abstract class");
   }

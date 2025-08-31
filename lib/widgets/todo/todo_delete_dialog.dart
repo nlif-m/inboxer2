@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:inboxer2/storage/storage.dart';
+import 'package:inboxer2/services/services.dart';
 
 class TodoDeleteDialog extends StatefulWidget {
   final Todo todo;

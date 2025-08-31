@@ -4,8 +4,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:inboxer2/storage/config/config.dart';
-import 'package:inboxer2/storage/todo/todo.dart';
+import 'package:inboxer2/services/config/config_service.dart';
+import 'package:inboxer2/services/todo/todo_service.dart';
+import 'todo_list_tile.dart';
+import 'todo_add_dialog.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -23,9 +25,17 @@ class _TodoListWidgetState extends State<TodoListWidget> {
     super.initState();
 
     if (Platform.isAndroid) {
-      _intentDataStreamSubscription =
-          ReceiveSharingIntent.getTextStream().listen((String value) async {
-        await GetIt.I<TodoStorage>().add(Todo.now(value));
+      _intentDataStreamSubscription = ReceiveSharingIntent.instance
+          .getMediaStream()
+          .listen((List<SharedMediaFile> media) async {
+        for (final media in media) {
+          if (media.type == SharedMediaType.text) {
+            final text = media.path;
+            if (text.isNotEmpty) {
+              await GetIt.I<TodoService>().add(Todo.now(text));
+            }
+          }
+        }
       }, onError: (err) {});
     }
   }
@@ -38,17 +48,17 @@ class _TodoListWidgetState extends State<TodoListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final todos = watchIt<TodoStorage>();
-    final isHidden = watchValue((ConfigStorage c) => c.isHidden());
+    final todos = watchIt<TodoService>();
+    final isHidden = watchValue((ConfigService c) => c.isHidden());
 
-    final config = GetIt.I<ConfigStorage>();
-    final todoStorage = GetIt.I<TodoStorage>();
+    final config = GetIt.I<ConfigService>();
+    final todoStorage = GetIt.I<TodoService>();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
         actions: [
           IconButton(
-            icon: Icon(Icons.exit_to_app),
+            icon: const Icon(Icons.exit_to_app),
             onPressed: () {
               SystemChannels.platform.invokeMethod('SystemNavigator.pop');
             },

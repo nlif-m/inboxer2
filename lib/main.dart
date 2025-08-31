@@ -2,10 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:inboxer2/storage/storage.dart';
+import 'package:inboxer2/services/services.dart';
+import 'package:inboxer2/widgets/todo/todo_list_widget.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,24 +20,28 @@ void main() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   GetIt.I.registerSingleton<SharedPreferences>(prefs);
 
-  ConfigStorage configStorage =
-      await ConfigStoragePrefs.withAsk(prefs: prefs, force: false);
-  GetIt.I.registerSingleton<ConfigStorage>(configStorage);
+  ConfigService configStorage =
+      await ConfigServicePrefs.withAsk(prefs: prefs, force: false);
 
-  TodoStorage todoStorage = TodoStorageInboxFile();
+  GetIt.I.registerSingleton<ConfigService>(configStorage);
+
+  TodoService todoStorage = TodoServiceInboxFile(config: configStorage);
   await todoStorage.init();
-  GetIt.I.registerSingleton<TodoStorage>(todoStorage);
-
-  Storage storage =
-      Storage(configStorage: configStorage, todoStorage: todoStorage);
-  GetIt.I.registerSingleton<Storage>(storage);
+  GetIt.I.registerSingleton<TodoService>(todoStorage);
 
   if (Platform.isAndroid) {
-    ReceiveSharingIntent.getInitialText().then((value) async {
-      if (value != null && value.isNotEmpty) {
-        await todoStorage.add(Todo.now(value));
-      }
-    });
+    ReceiveSharingIntent.instance.getInitialMedia().then(
+      (medias) async {
+        for (final media in medias) {
+          if (media.type == SharedMediaType.text) {
+            final text = media.path;
+            if (text.isNotEmpty) {
+              await todoStorage.add(Todo.now(text));
+            }
+          }
+        }
+      },
+    );
   }
 
   runApp(const MainApp());

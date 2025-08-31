@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
-import 'package:inboxer2/storage/todo/todo.dart';
-import 'package:inboxer2/storage/todo/todo_card_widget.dart';
-import 'package:inboxer2/storage/todo/todo_delete_dialog.dart';
-import 'package:inboxer2/storage/todo/todo_edit_dialog.dart';
 import 'package:watch_it/watch_it.dart';
+
+import 'todo_delete_dialog.dart';
+import 'todo_edit_dialog.dart';
+import 'todo_card_widget.dart';
+import 'package:inboxer2/services/services.dart';
 
 class TodoListTile extends StatelessWidget with WatchItMixin {
   final Todo todo;
@@ -13,7 +14,7 @@ class TodoListTile extends StatelessWidget with WatchItMixin {
 
   @override
   Widget build(BuildContext context) {
-    final todoStorage = GetIt.I<TodoStorage>();
+    final todoStorage = GetIt.I<TodoService>();
     return GestureDetector(
       onLongPress: () async {
         var isDelete = await showDialog(

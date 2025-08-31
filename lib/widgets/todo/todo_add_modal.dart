@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class TodoAddModal extends StatefulWidget {
   const TodoAddModal({super.key});
@@ -27,13 +26,14 @@ class _TodoAddModalState extends State<TodoAddModal> {
   @override
   Widget build(BuildContext context) {
     return Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            TextFormField(
-              controller: _todoTextControler,
-            )
-          ],
-        ));
+      key: _formKey,
+      child: Column(
+        children: [
+          TextFormField(
+            controller: _todoTextControler,
+          )
+        ],
+      ),
+    );
   }
 }

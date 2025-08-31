@@ -1,5 +1,3 @@
-import 'dart:core';
-
 class Todo {
   late String description;
   late DateTime createdAt;
